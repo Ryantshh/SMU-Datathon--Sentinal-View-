@@ -6,7 +6,6 @@ This project is an interactive Dashboard that visualizes threat levels and their
 The dashboard uses data on threat assessments, entity relationships, and other related information, allowing users to explore various aspects of the threat landscape.
 
 ## Project Structure 
-# Project Structure
 
 ```text
 Project Directory
