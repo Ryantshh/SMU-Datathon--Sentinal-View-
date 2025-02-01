@@ -6,6 +6,9 @@ This project is an interactive Dashboard that visualizes threat levels and their
 The dashboard uses data on threat assessments, entity relationships, and other related information, allowing users to explore various aspects of the threat landscape.
 
 ## Project Structure 
+# Project Structure
+
+```text
 Project Directory
 ├── data                         # Contains source data files in various formats
 │   ├── pdfs                     # Folder for raw PDF files used for analysis
@@ -34,6 +37,7 @@ Project Directory
 │   │   ├── extract_relationships_Local.py # Script for local relationship extraction
 │   │   ├── preprocess.py        # Data preprocessing utilities
 │   │   └── standardize_json.py  # Script for standardizing JSON data
+
 
 ## Dependencies
 
