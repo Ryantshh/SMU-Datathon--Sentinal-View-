@@ -28,7 +28,7 @@ Project Directory
 │   │   └── graph_data.js        # JavaScript file for graph data handling
 │   ├── nodeGenerator.py         # Script for generating graph nodes for visualization
 │   ├── lib                      # Python library for data extraction and preprocessing
-│   │   ├── api.py               # API integration for data extraction
+│   │   |
 │   │   ├── clean_entities.py    # Script for cleaning extracted entity data
 │   │   ├── dashboard.py         # Dashboard application script
 │   │   ├── extract_entities.py  # Script for extracting entities from text data
