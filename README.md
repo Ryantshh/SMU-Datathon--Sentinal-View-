@@ -55,7 +55,7 @@ This project requires the following Python packages:
 2. Run the "src/extract_entities.py" and the "src/clean_entities.py" to extract the entities. This would create the "processed_data/combined_entities.json and the "processed_data/cleaned_filtered_entities.json".
 3. Run the "src/extract_relationships_API.py" and the "src/standardize_json.py to extract the relationships between entities and to standardise the output.
 4. Run the src/assets/nodeGenerator.py which will geneate the src/assets/graph_data.js.
-5. Run the src/dashboard.py and a browser would be open to view and analyse the data. (MAIN FEATURE, YOU MAY SIMPLY RUN THIS FILE AS JSON DATA HAS ALREADY BEEN EXTRACTED)
+5. Run the src/dashboard.py and a browser would be open to view and analyse the data. (MAIN FEATURE, YOU MAY SIMPLY RUN THIS FILE AND FOLLOW THE LINK AS JSON DATA HAS ALREADY BEEN EXTRACTED)
 ## Features
 
 - Threat Level Distribution: Visualizes the distribution of threat levels across different entities in a bar chart.
