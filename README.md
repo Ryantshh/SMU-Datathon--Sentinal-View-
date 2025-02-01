@@ -22,7 +22,7 @@ Project Directory
 │   ├── cleaned_filtered_entities.json       # Filtered entity data
 │   ├── combined_entities.json   # Combined entity data from multiple sources
 │   ├── extracted_relationships.json # Raw extracted relationships
-│   └── standardized_final_extracted_relationships.json # Final standardized relationships data
+│   
 ├── src                          # Source code for data processing and dashboard
 │   ├── assets                   # Static assets for the dashboard
 │   │   ├── entity_relationship_graph.html # HTML file for the entity relationship graph visualization
