@@ -1,7 +1,7 @@
 
 # Entity Analysis Dashboard
 
-This project is an interactive Dashboard that visualizes threat levels and their associated data for various entities. The dashboard is powered by Dash and Plotly to provide real-time visualizations such as bar charts, heatmaps, word clouds, and geospatial maps.
+This project is showcases an interactive Dashboard that visualizes threat levels and their associated data for various entities. The dashboard is powered by Dash and Plotly to provide real-time visualizations such as bar charts, heatmaps, word clouds, and geospatial maps. It also utilises NLP models to extract vital entity and relationship data from unstructured text files and stores the data in json which will be used for visualisation. 
 
 The dashboard uses data on threat assessments, entity relationships, and other related information, allowing users to explore various aspects of the threat landscape.
 
