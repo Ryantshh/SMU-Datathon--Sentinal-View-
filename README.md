@@ -36,7 +36,7 @@ Project Directory
 │   │   ├── extract_relationships_Local.py # Script for local relationship extraction
 │   │   ├── preprocess.py        # Data preprocessing utilities
 │   │   └── standardize_json.py  # Script for standardizing JSON data
-
+```
 
 ## Dependencies
 
