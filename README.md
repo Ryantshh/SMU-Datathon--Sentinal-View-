@@ -8,7 +8,7 @@ The dashboard uses data on threat assessments, entity relationships, and other r
 ## Project Structure 
 
 ```text
-Project Directory
+project
 ├── data                         # Contains source data files in various formats
 │   ├── pdfs                     # Folder for raw PDF files used for analysis
 │   ├── news_excerpts_parsed.xlsx # Excel file with parsed news excerpts
@@ -21,21 +21,22 @@ Project Directory
 │   ├── cleaned_filtered_entities.json       # Filtered entity data
 │   ├── combined_entities.json   # Combined entity data from multiple sources
 │   ├── extracted_relationships.json # Raw extracted relationships
-│   
 ├── src                          # Source code for data processing and dashboard
 │   ├── assets                   # Static assets for the dashboard
 │   │   ├── entity_relationship_graph.html # HTML file for the entity relationship graph visualization
 │   │   └── graph_data.js        # JavaScript file for graph data handling
-│   ├── nodeGenerator.py         # Script for generating graph nodes for visualization
-│   ├── lib                      # Python library for data extraction and preprocessing
-│   │   |
-│   │   ├── clean_entities.py    # Script for cleaning extracted entity data
-│   │   ├── dashboard.py         # Dashboard application script
-│   │   ├── extract_entities.py  # Script for extracting entities from text data
-│   │   ├── extract_relationships_API.py  # Script for extracting relationships via API
-│   │   ├── extract_relationships_Local.py # Script for local relationship extraction
-│   │   ├── preprocess.py        # Data preprocessing utilities
-│   │   └── standardize_json.py  # Script for standardizing JSON data
+│   │   ├── nodeGenerator.py     # Script for generating graph nodes for visualization
+│   ├── lib                      # External libraries and dependencies
+│   │   ├── bindings             # Library bindings for integration
+│   │   ├── tom-select           # Dropdown selection library
+│   │   └── vis-9.1.2            # Visualization library for graph display
+│   ├── clean_entities.py        # Script for cleaning extracted entity data
+│   ├── dashboard.py             # Dashboard application script
+│   ├── extract_entities.py      # Script for extracting entities from text data
+│   ├── extract_relationships_API.py  # Script for extracting relationships via API
+│   ├── extract_relationships_Local.py # Script for local relationship extraction
+│   └── preprocess.py            # Data preprocessing utilities
+
 ```
 
 ## Dependencies
