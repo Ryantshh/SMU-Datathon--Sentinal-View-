@@ -1,424 +1,508 @@
 <html>
-
 <head>
-    <meta charset="UTF-8">
-    <title>Entity Relationship Graph</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
-        crossorigin="anonymous">
-
-    <!-- Bootstrap JS (optional, only if needed for other dynamic features) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js bootstrap.bundle.min.js"
-        crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js"></script>
-    <script src="graph_data.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #222222;
-            color: white;
-            overflow: hidden;
-        }
-
-        #mynetwork {
-            width: 100vw;
-            height: 100vh;
-            background-color: #222222;
-        }
-
-        /* Threat Level Widget */
-        #threat-widget {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(255, 255, 255, 0.8);
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            z-index: 1000;
-        }
-
-
-        #threat-widget label {
-            font-weight: bold;
-            color: #333;
-        }
-
-        #threat-widget input[type="range"] {
-            width: 100%;
-            margin-top: 10px;
-        }
-
-        div.vis-tooltip {
-            visibility: visible !important;
-            /* Ensure tooltip is shown */
-            opacity: 1 !important;
-            /* Ensure opacity is not zero */
-            background-color: rgba(0, 0, 0, 0.85);
-            /* Dark background for readability */
-            color: white;
-            /* White text color */
-            padding: 8px 12px;
-            /* Padding inside the tooltip */
-            border-radius: 5px;
-            /* Rounded corners */
-            font-size: 14px;
-            /* Font size */
-            position: absolute;
-            /* Keep tooltip positioned correctly */
-            z-index: 1000;
-            /* Ensure it's above other elements */
-            max-width: 300px;
-            /* Optional max-width for large texts */
-            pointer-events: none;
-            /* Prevent interactions with tooltip */
-        }
-
-        /* Align search widget to the right */
-        #search-widget {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            width: 300px;
-        }
-
-        /* Auto-complete suggestion styles */
-        .autocomplete-suggestions {
-            position: absolute;
-            background-color: white;
-            color: black;
-            border: 1px solid #ccc;
-            max-height: 150px;
-            overflow-y: auto;
-            z-index: 2000;
-            width: 100%;
-            /* Match input box width */
-            left: 0;
-        }
-
-        .autocomplete-suggestion {
-            padding: 8px;
-            cursor: pointer;
-        }
-
-        .autocomplete-suggestion:hover {
-            background-color: #eee;
-        }
-
-        .input-group {
-            margin-bottom: 10px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Entity Relationship Graph</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+  
+  <!-- Bootstrap JS (optional, only if needed for other dynamic features) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js"></script>
+  <script src="graph_data2.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #222222;
+      color: white;
+      overflow: hidden;
+    }
+    #mynetwork {
+      width: 100vw;
+      height: 100vh;
+      background-color: #222222;
+    }
+    /* Threat Level Widget */
+    #threat-widget {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(255, 255, 255, 0.8);
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      z-index: 1000;
+    }
+    #threat-widget label {
+      font-weight: bold;
+      color: #333;
+    }
+    #threat-widget input[type="range"] {
+      width: 100%;
+      margin-top: 10px;
+    }
+    div.vis-tooltip {
+      visibility: visible !important;
+      opacity: 1 !important;
+      background-color: rgba(0, 0, 0, 0.85);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 5px;
+      font-size: 14px;
+      position: absolute;
+      z-index: 1000;
+      max-width: 300px;
+      pointer-events: none;
+    }
+    /* Align search widget to the right */
+    #search-widget {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      width: 300px;
+    }
+    /* Auto-complete suggestion styles */
+    .autocomplete-suggestions {
+      position: absolute;
+      background-color: white;
+      color: black;
+      border: 1px solid #ccc;
+      max-height: 150px;
+      overflow-y: auto;
+      z-index: 2000;
+      width: 100%;
+      left: 0;
+      margin-top: 40px;
+    }
+    .autocomplete-suggestion {
+      padding: 8px;
+      cursor: pointer;
+    }
+    .autocomplete-suggestion:hover {
+      background-color: #eee;
+    }
+    .input-group {
+      margin-bottom: 10px;
+    }
+  </style>
 </head>
-
-
 <body>
-    <div id="mynetwork"></div>
+  <div id="mynetwork"></div>
 
-    <!-- Search widget for entity pairs -->
-    <!-- Search widget for entity pairs -->
-    <div id="search-widget">
-        <div class="input-group">
-            <span class="input-group-text">Entity 1:</span>
-            <input type="text" class="form-control" id="entity1" autocomplete="off" placeholder="Search for an entity">
-        </div>
-        <div class="input-group">
-            <span class="input-group-text">Entity 2:</span>
-            <input type="text" class="form-control" id="entity2" autocomplete="off"
-                placeholder="Search for another entity">
-        </div>
-        <button id="go-button" class="btn btn-primary w-100">Go</button>
-        <button id="reset-button" class="btn btn-secondary w-100 mt-2">Reset</button>
+  <!-- Search widget for entity pairs -->
+  <div id="search-widget">
+    <div class="input-group">
+      <span class="input-group-text">Entity 1:</span>
+      <input type="text" class="form-control" id="entity1" autocomplete="off" placeholder="Search for an entity">
     </div>
-
-    <!-- Threat Level Filter Widget -->
-    <div id="threat-widget">
-        <label for="threat-level-slider">Threat Level: <span id="slider-value">10</span></label>
-        <input type="range" id="threat-level-slider" min="0" max="10" value="10" step="1">
+    <div class="input-group">
+      <span class="input-group-text">Entity 2:</span>
+      <input type="text" class="form-control" id="entity2" autocomplete="off" placeholder="Search for another entity">
     </div>
+    <button id="go-button" class="btn btn-primary w-100">Go</button>
+    <button id="reset-button" class="btn btn-secondary w-100 mt-2">Reset</button>
+    <h5 class="mt-3" style="color: black;">Search by Location</h5>
+    <div class="input-group">
+      <span class="input-group-text">Location:</span>
+      <input type="text" class="form-control" id="location-search" autocomplete="off" placeholder="Search for a location">
+    </div>
+    <div class="input-group mt-2">
+      <span class="input-group-text">Entity:</span>
+      <input type="text" class="form-control" id="entity-by-location" autocomplete="off" placeholder="Select entity by location">
+    </div>
+    <button id="location-go-button" class="btn btn-primary w-100 mt-2">Go</button>
 
+    <h5 class="mt-3" style="color: black;">Search by Threat Type</h5>
+    <div class="input-group">
+      <span class="input-group-text">Type:</span>
+      <input type="text" class="form-control" id="type-search" autocomplete="off" placeholder="Search for a threat type">
+    </div>
+    <div class="input-group mt-2">
+      <span class="input-group-text">Entity:</span>
+      <input type="text" class="form-control" id="entity-by-type" autocomplete="off" placeholder="Select entity by type">
+    </div>
+    <button id="type-go-button" class="btn btn-primary w-100 mt-2">Go</button>
+  </div>
 
+  <!-- Threat Level Filter Widget -->
+  <div id="threat-widget">
+    <label for="threat-level-slider">Threat Level: <span id="slider-value">10</span></label>
+    <input type="range" id="threat-level-slider" min="0" max="10" value="10" step="1">
+  </div>
 
+  <script>
+    // Helper function to calculate color based on threat level
+    function getColorForThreatLevel(level) {
+      const colors = {
+        0: '#00FF00',
+        1: '#33FF00',
+        2: '#66FF00',
+        3: '#99FF00',
+        4: '#CCFF00',
+        5: '#FFFF00',
+        6: '#FFCC00',
+        7: '#FF9900',
+        8: '#FF6600',
+        9: '#FF3300',
+        10: '#FF0000'
+      };
+      return colors[level] || '#FFFFFF';
+    }
 
+    // Initialize network with default nodes and edges
+    const container = document.getElementById('mynetwork');
+    const network = new vis.Network(container, {
+      nodes: new vis.DataSet(allNodes),
+      edges: new vis.DataSet(allEdges)
+    }, {
+      nodes: { size: 16, font: { color: 'white' } },
+      edges: { smooth: true, font: { size: 12, align: 'middle' }, color: { color: '#FFFFFF' } },
+      physics: {
+        stabilization: { enabled: true, iterations: 50 },
+        solver: 'forceAtlas2Based',
+        forceAtlas2Based: { gravitationalConstant: -50, centralGravity: 0.005, springLength: 120 }
+      },
+      interaction: { hover: true }
+    });
 
+    // Function to update graph by threat level
+    function updateGraph(threatLevel) {
+      const filteredEdges = allEdges.filter(edge => edge.threat_level === threatLevel);
+      const connectedNodeIds = new Set(filteredEdges.flatMap(edge => [edge.from, edge.to]));
+      const filteredNodes = allNodes.filter(node => connectedNodeIds.has(node.id));
 
-    <script>
+      network.body.data.nodes.clear();
+      network.body.data.edges.clear();
+      network.body.data.nodes.add(filteredNodes.map(node => ({
+        ...node,
+        color: getColorForThreatLevel(threatLevel)
+      })));
+      network.body.data.edges.add(filteredEdges.map(edge => ({
+        ...edge,
+        color: '#FFFFFF'
+      })));
+    }
 
-        // Helper function to calculate color based on threat level
-        // Helper function to calculate node color dynamically with greater contrast
-        function getColorForThreatLevel(level) {
-            const colors = {
-                0: '#00FF00',   // Bright green for threat level 0
-                1: '#33FF00',
-                2: '#66FF00',
-                3: '#99FF00',
-                4: '#CCFF00',
-                5: '#FFFF00',   // Yellow
-                6: '#FFCC00',
-                7: '#FF9900',
-                8: '#FF6600',
-                9: '#FF3300',
-                10: '#FF0000'  // Bright red for threat level 10
-            };
-            return colors[level] || '#FFFFFF';  // Default to white if level is undefined
-        }
-        // Function to update graph based on edge threat level
-        function updateGraph(threatLevel) {
-            // Step 1: Filter edges by the threat level
-            const filteredEdges = allEdges.filter(edge => edge.threat_level === threatLevel);
+    // Auto-complete setup function with optional callback
+    function setupAutocomplete(inputId, data, onSelectCallback = null) {
+      const input = document.getElementById(inputId);
 
-            // Step 2: Get all node IDs connected by the filtered edges
-            const connectedNodeIds = new Set(filteredEdges.flatMap(edge => [edge.from, edge.to]));
+      input.addEventListener('input', function () {
+        const value = input.value.toLowerCase();
+        const matches = data.filter(item => item.label.toLowerCase().includes(value));
+        displaySuggestions(inputId, matches, onSelectCallback);
+      });
 
-            // Step 3: Filter nodes that are part of these edges
-            const filteredNodes = allNodes.filter(node => connectedNodeIds.has(node.id));
+      input.addEventListener('focus', function () {
+        displaySuggestions(inputId, data, onSelectCallback);
+      });
 
-            // Step 4: Clear the current data in the network
-            network.body.data.nodes.clear();
-            network.body.data.edges.clear();
+      // Remove suggestion box on blur after a short delay
+      input.addEventListener('blur', function () {
+        setTimeout(() => {
+          const suggestionBox = document.querySelector(`#${inputId}-suggestions`);
+          if (suggestionBox) suggestionBox.remove();
+        }, 200);
+      });
+    }
 
-            // Step 5: Add filtered nodes and edges to the network
-            network.body.data.nodes.add(filteredNodes.map(node => ({
-                ...node,
-                color: getColorForThreatLevel(threatLevel)  // Use the threat level of the edges for color
-            })));
+    // Helper function to display suggestions with an optional callback
+    function displaySuggestions(inputId, suggestions, onSelectCallback = null) {
+      let suggestionBox = document.querySelector(`#${inputId}-suggestions`);
+      if (suggestionBox) suggestionBox.remove();
 
-            network.body.data.edges.add(filteredEdges.map(edge => ({
-                ...edge,
-                title: edge.title  // Include edge title for hover display
-            })));
-        }
+      if (suggestions.length === 0) return;
 
-        // Initialize the network
-        const container = document.getElementById('mynetwork');
-        const networkData = {
-            nodes: new vis.DataSet(allNodes),
-            edges: new vis.DataSet(allEdges)
-        };
+      suggestionBox = document.createElement('div');
+      suggestionBox.className = 'autocomplete-suggestions';
+      suggestionBox.id = `${inputId}-suggestions`;
+      document.getElementById(inputId).parentNode.appendChild(suggestionBox);
 
-        const options = {
-            nodes: { size: 16, font: { color: 'white' } },
-            edges: {
-                color: { inherit: false },
-                smooth: true,
-                font: { size: 12, align: 'middle' }
-            },
-            physics: {
-                enabled: true,
-                stabilization: {
-                    enabled: true,
-                    iterations: 50,        // Reduce iterations for faster stabilization (default is 1000)
-                    updateInterval: 25     // Lower values provide faster feedback on updates
-                },
-                solver: 'forceAtlas2Based',  // Use a fast solver like 'forceAtlas2Based' or 'barnesHut'
-                forceAtlas2Based: {
-                    gravitationalConstant: -50,  // Increase the negative value for tighter pulling forces
-                    centralGravity: 0.005,       // Increase to pull nodes toward the center faster
-                    springLength: 120,           // Adjust spring length for node spacing (shorter = tighter graph)
-                    springConstant: 0.1          // Lower values reduce spring strength
-                },
-                maxVelocity: 50,                 // Limits node velocity (helps with smoother stabilization)
-                minVelocity: 0.75,               // Stabilize faster by setting a higher minimum velocity threshold
-                timestep: 0.5                    // Increase timestep to speed up physics calculations
-            },
-            interaction: {
-                hover: true
-            }
-        };
-
-        const network = new vis.Network(container, networkData, options);
-
-        function setupAutocomplete(inputId, data, filterFunction = null) {
-            const input = document.getElementById(inputId);
-
-            input.addEventListener('input', function () {
-                // Clear existing suggestions
-                const suggestions = document.querySelector(`#${inputId}-suggestions`);
-                if (suggestions) suggestions.remove();
-
-                const value = this.value.toLowerCase();
-                if (!value && filterFunction) {
-                    // If input is empty and there's a filter, display all related entities
-                    displaySuggestions(inputId, filterFunction(data));
-                    return;
-                }
-
-                // Filter data based on input text
-                let matchingEntities = data.filter(node => node.label.toLowerCase().includes(value));
-                if (filterFunction) {
-                    matchingEntities = filterFunction(matchingEntities);
-                }
-
-                displaySuggestions(inputId, matchingEntities);
-            });
-        }
-
-        // Helper function to display suggestions (factored out)
-        function displaySuggestions(inputId, matchingEntities) {
-            if (matchingEntities.length === 0) return;
-
-            const input = document.getElementById(inputId);
-            const rect = input.getBoundingClientRect();  // Get input position for proper suggestion alignment
-
-            const suggestionBox = document.createElement('div');
-            suggestionBox.className = 'autocomplete-suggestions';
-            suggestionBox.id = `${inputId}-suggestions`;
-            suggestionBox.style.top = `${rect.bottom}px`;
-            suggestionBox.style.left = `${rect.left}px`;
-            suggestionBox.style.width = `${rect.width}px`;
-            document.body.appendChild(suggestionBox);
-
-            matchingEntities.forEach(entity => {
-                const suggestion = document.createElement('div');
-                suggestion.className = 'autocomplete-suggestion';
-                suggestion.textContent = entity.label;
-                suggestion.addEventListener('click', () => {
-                    input.value = entity.label;  // Update input with selected suggestion
-                    suggestionBox.remove();
-
-                    // If Entity 1 is selected, update Entity 2 auto-complete
-                    if (inputId === 'entity1') {
-                        setupEntity2Autocomplete(entity.id);
-                    }
-                });
-                suggestionBox.appendChild(suggestion);
-            });
-        }
-        // Function to set up Entity 2 auto-complete with related entities
-        function setupEntity2Autocomplete(entity1Id) {
-            const relatedEntities = getRelatedEntities(entity1Id);
-
-            // Setup autocomplete for Entity 2 to only show related entities
-            setupAutocomplete('entity2', relatedEntities, (data) => {
-                return relatedEntities;  // Return all related entities for display on focus
-            });
-
-            // Event listener to display all related entities when clicking on Entity 2 input box
-            const entity2Input = document.getElementById('entity2');
-            entity2Input.addEventListener('focus', function () {
-                displaySuggestions('entity2', relatedEntities);
-            }, { once: true });  // Add event listener only once to prevent duplicates
-        }
-
-        // Helper function to get entities related to the selected Entity 1
-        function getRelatedEntities(entityId) {
-            const relatedEdges = allEdges.filter(edge => edge.from === entityId || edge.to === entityId);
-            const relatedEntityIds = new Set(
-                relatedEdges.flatMap(edge => [edge.from, edge.to]).filter(id => id !== entityId)
-            );
-            return allNodes.filter(node => relatedEntityIds.has(node.id));
-        }
-
-        // Initial auto-complete setup for both inputs
-        setupAutocomplete('entity1', allNodes);  // No restrictions for Entity 1
-        setupAutocomplete('entity2', allNodes);  // Initially unrestricted for Entity 2
-
-
-        let debounceTimer;
-
-        // Debounce function to delay search execution
-        function debounce(func, delay) {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(func, delay);
-        }
-
-        // Function to highlight a pair of entities after updating threat level
-        function highlightPairWithDebounce(entity1, entity2) {
-            debounce(() => highlightPair(entity1, entity2), 5000);  // 500ms delay to allow network rendering
-        }
-        // Function to highlight a pair of entities
-        function highlightPair(entity1, entity2) {
-            const edge = allEdges.find(edge =>
-                (edge.from === entity1 && edge.to === entity2) ||
-                (edge.from === entity2 && edge.to === entity1)
-            );
-
-            if (!edge) {
-                alert('No matching relationship found between these entities.');
-                return;
-            }
-
-            // Get the current threat level from the slider
-            const currentThreatLevel = parseInt(document.getElementById('threat-level-slider').value, 10);
-
-            // If the threat level doesn't match, update the slider
-            if (edge.threat_level !== currentThreatLevel) {
-                document.getElementById('threat-level-slider').value = edge.threat_level;
-                document.getElementById('slider-value').textContent = edge.threat_level;
-
-                // Update the graph and use debounce to allow time for rendering
-                updateGraph(edge.threat_level);
-                debounce(() => highlightPair(entity1, entity2), 500);  // Retry after 500ms delay
-                return;
-            }
-
-            // Focus on the nodes and highlight the edge
-            network.fit({ nodes: [edge.from, edge.to], animation: true });
-            network.body.data.edges.update({
-                id: edge.id || `${edge.from}-${edge.to}`,
-                color: { color: 'red', highlight: 'red' },
-                width: 3
-            });
-        }
-        // Event listener for the "Go" button click
-        document.getElementById('go-button').addEventListener('click', function () {
-            const entity1 = document.getElementById('entity1').value.trim();
-            const entity2 = document.getElementById('entity2').value.trim();
-
-            if (!entity1 || !entity2) {
-                alert('Please enter both entities.');
-                return;
-            }
-
-            // Call the highlightPair function
-            highlightPair(entity1, entity2);
+      suggestions.forEach(suggestion => {
+        const suggestionElement = document.createElement('div');
+        suggestionElement.className = 'autocomplete-suggestion';
+        suggestionElement.textContent = suggestion.label;
+        suggestionElement.addEventListener('click', () => {
+          document.getElementById(inputId).value = suggestion.label;
+          suggestionBox.remove();
+          if (onSelectCallback && typeof onSelectCallback === 'function') {
+            onSelectCallback(suggestion);
+          } else if (inputId === 'entity1') {
+            setupEntity2Autocomplete(suggestion.id);
+          }
         });
+        suggestionBox.appendChild(suggestionElement);
+      });
+    }
 
+    // Function to get related entities for a given entity ID
+    function getRelatedEntities(entityId) {
+      const relatedEdges = allEdges.filter(edge => edge.from === entityId || edge.to === entityId);
+      const relatedEntityIds = new Set(
+        relatedEdges.flatMap(edge => [edge.from, edge.to]).filter(id => id !== entityId)
+      );
+      return allNodes.filter(node => relatedEntityIds.has(node.id));
+    }
 
-        // Handle "Go" button click
-        document.getElementById('go-button').addEventListener('click', function () {
-            const entity1 = document.getElementById('entity1').value.trim();
-            const entity2 = document.getElementById('entity2').value.trim();
+    // Function to set up filtered suggestions for Entity 2
+    function setupEntity2Autocomplete(entity1Id) {
+      const relatedEntities = getRelatedEntities(entity1Id);
+      setupAutocomplete('entity2', relatedEntities);
+      const entity2Input = document.getElementById('entity2');
+      entity2Input.addEventListener('focus', function () {
+        displaySuggestions('entity2', relatedEntities);
+      }, { once: true });
+    }
 
-            if (!entity1 || !entity2) {
-                alert('Please enter both entities.');
-                return;
-            }
+    // Event listener for selecting Entity 1
+    document.getElementById('entity1').addEventListener('change', function () {
+      const entity1Label = this.value.trim();
+      const entity1Node = allNodes.find(node => node.label === entity1Label);
+      if (entity1Node) {
+        setupEntity2Autocomplete(entity1Node.id);
+      }
+    });
 
-            highlightPair(entity1, entity2);
+    // Setup autocomplete for inputs
+    setupAutocomplete('entity1', allNodes, (selected) => setupEntity2Autocomplete(selected.id));
+
+    // Function to highlight a single entity:
+    // It first updates the graph to the target threat level, waits for stabilization,
+    // then uses network.focus() to zoom in on the target node and permanently highlight it.
+    function highlightEntity(entityLabel) {
+      const node = allNodes.find(node => node.label === entityLabel);
+      if (!node) {
+        alert('Entity not found.');
+        return;
+      }
+      const threatLevel = node.threat_level || 10;
+      updateGraph(threatLevel);
+      document.getElementById('threat-level-slider').value = threatLevel;
+      document.getElementById('slider-value').textContent = threatLevel;
+
+      network.once('stabilizationIterationsDone', function() {
+        network.focus(node.id, {
+          scale: 0.5,
+          animation: {
+            duration: 1000,
+            easingFunction: 'easeInOutQuad'
+          }
         });
-          // Handle "Reset" button click
-            document.getElementById('reset-button').addEventListener('click', function () {
-                // Clear input fields
-                document.getElementById('entity1').value = '';
-                document.getElementById('entity2').value = '';
-
-                // Reset threat level slider to default (10)
-                document.getElementById('threat-level-slider').value = 10;
-                document.getElementById('slider-value').textContent = 10;
-
-                // Reset graph to display all nodes and edges
-                updateGraph(10);
-            });
-        // Event listener for slider input
-        document.getElementById('threat-level-slider').addEventListener('input', function () {
-            const level = parseInt(this.value, 10);
-            document.getElementById('slider-value').textContent = level;
-            updateGraph(level);
+        // Permanently highlight the node until a new search or reset is made.
+        network.body.data.nodes.update({
+          id: node.id,
+          color: { background: 'red', border: 'red' }
         });
+      });
+      network.stabilize();
+    }
 
-        // Initialize graph with a default threat level
-        updateGraph(10);</script>
+    // Function to highlight a pair of entities:
+    // It updates the graph to the target threat level, waits for stabilization,
+    // then zooms (using focus on the first entity) and permanently highlights both nodes and the connecting edge.
+    function highlightPair(entity1Label, entity2Label) {
+      const entity1 = allNodes.find(node => node.label === entity1Label);
+      const entity2 = allNodes.find(node => node.label === entity2Label);
+
+      if (!entity1 || !entity2) {
+        alert('One or both entities not found.');
+        return;
+      }
+
+      const edge = allEdges.find(edge =>
+        (edge.from === entity1.id && edge.to === entity2.id) ||
+        (edge.from === entity2.id && edge.to === entity1.id)
+      );
+
+      if (!edge) {
+        alert('No matching relationship found between these entities.');
+        return;
+      }
+
+      const currentThreatLevel = edge.threat_level || 10;
+      updateGraph(currentThreatLevel);
+      document.getElementById('threat-level-slider').value = currentThreatLevel;
+      document.getElementById('slider-value').textContent = currentThreatLevel;
+
+      network.once('stabilizationIterationsDone', function () {
+        // For pairs, simply focus on the first entity.
+        network.focus(entity1.id, {
+          scale: 0.5,
+          animation: {
+            duration: 1000,
+            easingFunction: 'easeInOutQuad'
+          }
+        });
+        // Permanently highlight both nodes and the connecting edge until a new search or reset.
+        network.body.data.nodes.update([
+          { id: entity1.id, color: { background: 'red', border: 'red' } },
+          { id: entity2.id, color: { background: 'red', border: 'red' } }
+        ]);
+        network.body.data.edges.update({
+          id: edge.id || `${edge.from}-${edge.to}`,
+          color: { color: '#ff6600', highlight: '#ff6600' },
+          width: 3
+        });
+      });
+      network.stabilize();
+    }
+
+    // Reset button: clears input fields, removes suggestion boxes, resets threat level to 10, and updates the graph.
+    document.getElementById('reset-button').addEventListener('click', function () {
+      // Clear all input fields and remove suggestion boxes
+      ['entity1', 'entity2', 'location-search', 'entity-by-location', 'type-search', 'entity-by-type'].forEach(id => {
+        document.getElementById(id).value = "";
+        const suggestionBox = document.querySelector(`#${id}-suggestions`);
+        if (suggestionBox) suggestionBox.remove();
+      });
+      // Reset threat level slider and graph
+      document.getElementById('threat-level-slider').value = 10;
+      document.getElementById('slider-value').textContent = 10;
+      updateGraph(10);
+      network.stabilize();
+    });
+
+    // Edge hover event to display description
+    network.on('hoverEdge', function (params) {
+      const edgeId = params.edge;
+      const edge = network.body.data.edges.get(edgeId);
+
+      network.body.data.edges.update({
+        id: edgeId,
+        color: { color: 'red' },
+        width: 3
+      });
+
+      const tooltip = document.createElement('div');
+      tooltip.className = 'vis-tooltip';
+      tooltip.textContent = edge.title || 'No description available';
+      tooltip.style.position = 'absolute';
+      tooltip.style.zIndex = '1000';
+      tooltip.style.backgroundColor = '#333';
+      tooltip.style.color = '#fff';
+      tooltip.style.padding = '5px 10px';
+      tooltip.style.borderRadius = '5px';
+
+      document.body.appendChild(tooltip);
+
+      network.on('mousemove', function (event) {
+        tooltip.style.left = `${event.pointer.DOM.x + 10}px`;
+        tooltip.style.top = `${event.pointer.DOM.y + 10}px`;
+      });
+
+      network.on('blurEdge', function () {
+        network.body.data.edges.update({
+          id: edgeId,
+          color: '#FFFFFF',
+          width: 1
+        });
+        tooltip.remove();
+        network.off('mousemove');
+        network.off('blurEdge');
+      });
+    });
+
+    // Event listeners for Go buttons
+    document.getElementById('go-button').addEventListener('click', function () {
+      const entity1 = document.getElementById('entity1').value.trim();
+      const entity2 = document.getElementById('entity2').value.trim();
+
+      if (!entity1 || !entity2) {
+        alert('Please enter both entities.');
+        return;
+      }
+      highlightPair(entity1, entity2);
+    });
+
+    document.getElementById('location-go-button').addEventListener('click', function () {
+      const entity = document.getElementById('entity-by-location').value.trim();
+      if (!entity) {
+        alert('Please select an entity.');
+        return;
+      }
+      highlightEntity(entity);
+    });
+
+    document.getElementById('type-go-button').addEventListener('click', function () {
+      const entity = document.getElementById('entity-by-type').value.trim();
+      if (!entity) {
+        alert('Please select an entity.');
+        return;
+      }
+      highlightEntity(entity);
+    });
+
+    // Event listener for slider input
+    document.getElementById('threat-level-slider').addEventListener('input', function () {
+      const level = parseInt(this.value, 10);
+      document.getElementById('slider-value').textContent = level;
+      updateGraph(level);
+    });
+
+    // Helper function to display suggestions for location or type searches
+    function displayLocationOrTypeSuggestions(inputId, suggestions) {
+      let suggestionBox = document.querySelector(`#${inputId}-suggestions`);
+      if (suggestionBox) suggestionBox.remove();
+
+      if (suggestions.length === 0) return;
+
+      suggestionBox = document.createElement('div');
+      suggestionBox.className = 'autocomplete-suggestions';
+      suggestionBox.id = `${inputId}-suggestions`;
+      document.getElementById(inputId).parentNode.appendChild(suggestionBox);
+
+      suggestions.forEach(suggestion => {
+        const suggestionElement = document.createElement('div');
+        suggestionElement.className = 'autocomplete-suggestion';
+        suggestionElement.textContent = suggestion.label;
+        suggestionElement.addEventListener('click', () => {
+          document.getElementById(inputId).value = suggestion.label;
+          suggestionBox.remove();
+        });
+        suggestionBox.appendChild(suggestionElement);
+      });
+    }
+
+    // Set up autocomplete for location and type inputs with corresponding entity matches
+    function setupLocationAndTypeAutocomplete() {
+      const locations = Array.from(new Set(allNodes.map(node => node.location).filter(Boolean)))
+        .map(location => ({ label: location }));
+      const types = Array.from(new Set(allNodes.map(node => node.threat_type).filter(Boolean)))
+        .map(type => ({ label: type }));
+
+      // Setup location search autocomplete with callback to update entity suggestions
+      setupAutocomplete('location-search', locations, (selectedLocation) => {
+        const matchingEntities = filterEntitiesByKey('location', selectedLocation.label);
+        setupAutocomplete('entity-by-location', matchingEntities.map(entity => ({ label: entity.label })));
+        displayLocationOrTypeSuggestions('entity-by-location', matchingEntities.map(entity => ({ label: entity.label })));
+      });
+
+      // Setup type search autocomplete with callback to update entity suggestions
+      setupAutocomplete('type-search', types, (selectedType) => {
+        const matchingEntities = filterEntitiesByKey('threat_type', selectedType.label);
+        setupAutocomplete('entity-by-type', matchingEntities.map(entity => ({ label: entity.label })));
+        displayLocationOrTypeSuggestions('entity-by-type', matchingEntities.map(entity => ({ label: entity.label })));
+      });
+    }
+
+    // Helper function to filter entities by a key (e.g., location or threat type)
+    function filterEntitiesByKey(key, value) {
+      return allNodes.filter(node => node[key] && node[key].toLowerCase() === (value || '').toLowerCase());
+    }
+
+    // Initialize graph with default threat level and set up location/type autocomplete
+    updateGraph(10);
+    setupLocationAndTypeAutocomplete();
+  </script>
 </body>
-
 </html>
