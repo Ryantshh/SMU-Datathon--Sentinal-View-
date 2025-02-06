@@ -80,7 +80,7 @@ heatmap_data = heatmap_data.loc[(heatmap_data != 0).any(axis=1), (heatmap_data !
 old_heatmap_fig = px.imshow(
     heatmap_data,
     labels={'x': 'Entity 2', 'y': 'Entity 1', 'color': 'Threat Level'},
-    title='Entity Pair Frequency and Threat Level Heatmap (Levels 5-10)',
+    title='Visualise the Entity Pair and its Threat Level (Levels 5-10)',
     color_continuous_scale='Oranges',
     template="plotly_dark",
     zmin=5,
@@ -104,7 +104,7 @@ def create_bar_chart(threat_level_filter):
         x="Threat Type",
         y="Impact Level",
         color="Threat Type",
-        title="Impact Level on Singapore by Threat Type",
+        title="Visualise the Impact level of each threat type to Singapore",
         template="plotly_dark"
     )
     fig.update_layout(plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)")
@@ -127,6 +127,7 @@ df_treemap = pd.DataFrame({
     'Threat Level': threat_level_list_treemap,
     'Threat Type': threat_type_list_treemap
 })
+
 # Replace missing threat types with "Unknown" and filter out zero-threat entries
 df_treemap['Threat Type'] = df_treemap['Threat Type'].fillna("Unknown")
 df_treemap = df_treemap[df_treemap['Threat Level'] > 0]
@@ -137,7 +138,7 @@ treemap_fig = px.treemap(
     color='Threat Level',
     color_continuous_scale='Oranges',
     template="plotly_dark",
-    title="Treemap of Entity Threat Levels by Threat Type"
+    title="Visualise the threat level of each entity, categorised by threat type"
 )
 treemap_fig.update_layout(
     plot_bgcolor="rgba(0,0,0,0)",
@@ -174,32 +175,42 @@ dropdown_options = [
 # -----------------------------------------------
 # Dash App Layout and Callbacks using Darkly Theme
 app = Dash(__name__, external_stylesheets=[dbc.themes.DARKLY])
+app.title = "Sentinel View"
+
+
 app.layout = dbc.Container([
-    dbc.NavbarSimple(
-        brand=html.Span("Sentinel View", style={
-            'fontSize': '2.5rem',
-            'fontFamily': "'Montserrat', sans-serif",
-            'fontWeight': 'bold'
-        }),
-        brand_href="#",
-        color="dark",
-        dark=True,
-        fluid=True,
-        className="mb-4"
-    ),
+    html.Link(rel="icon", href='/assets/favicon.ico'),
+dbc.NavbarSimple(
+    brand=html.Img(src='/assets/logo.png', height="120px"), 
+    brand_href="#",
+    color="black",
+    dark=True,
+    fluid=True,
+    className="mb-4"
+),
     dbc.Row([
         dbc.Col([
             html.H2("Entity Relationship Graph"),
-            html.Iframe(src='/assets/entity_relationship_graph.html', width='100%', height='600px', style={'border': 'none'})
+            html.Iframe(src='/assets/entity_relationship_graph.html', width='98%', height='850px', style={'border': 'none', 'margin-left': 'auto', 'margin-right': 'auto', 'display': 'block'})
+        ], width=12)
+    ], className="mb-4"),
+        dbc.Row([
+        dbc.Col([
+            html.H2("Treemap of Entity Threat Levels by Threat Type"),
+            dcc.Graph(
+                id='treemap',
+                figure=treemap_fig,
+                style={'height': '800px', 'width': '100%'}
+            )
         ], width=12)
     ], className="mb-4"),
     dbc.Row([
         dbc.Col([
             html.H2("Threat Level and Collaborations Distribution Across Entities"),
-            dcc.Graph(id='threat-level-bar', config={'displayModeBar': False}),
+            dcc.Graph(id='threat-level-bar', config={'scrollZoom': True, 'displayModeBar': True, 'responsive': True},  style={'height': '700px', 'width': '100%'}),
             dcc.Slider(
                 id='threat-slider',
-                min=df['Threat Level'].min(),
+                min=6,
                 max=df['Threat Level'].max(),
                 value=df['Threat Level'].min(),
                 marks={i: str(i) for i in range(df['Threat Level'].min(), df['Threat Level'].max() + 1)},
@@ -219,11 +230,24 @@ app.layout = dbc.Container([
                     size="Impact Level",
                     color="Impact Level",
                     hover_name="Location",
-                    title="Threat Origins and Impact Levels to Singapore",
+                    title="Visualise the origin of the threat and its impact to Singapore",
                     projection="natural earth",
                     color_continuous_scale="Reds",
                     template="plotly_dark"
-                ).update_layout(plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)"),
+                ).update_layout(plot_bgcolor="rgba(0,0,0,0)",
+                                paper_bgcolor="rgba(0,0,0,0)",
+                                geo=dict(
+                                    showcoastlines=True,
+                                    coastlinecolor="white", 
+                                    showland=True,
+                                    landcolor="black",
+                                    showlakes=True,
+                                    lakecolor="black",
+                                    showcountries=True,
+                                    countrycolor="white",
+                                    framecolor="white",
+                                )
+                                ),
                 style={'height': '600px', 'width': '100%'}
             )
         ], width=12)
@@ -231,7 +255,7 @@ app.layout = dbc.Container([
     dbc.Row([
         dbc.Col([
             html.H2("Impact Levels to Singapore"),
-            dcc.Graph(id='bar-chart', figure=create_bar_chart(0), style={'height': '600px', 'width': '100%'}),
+            dcc.Graph(id='bar-chart', figure=create_bar_chart(0), style={'height': '700px', 'width': '100%'}),
             dcc.Slider(
                 id='impact-level-slider',
                 min=df_bar['Impact Level'].min(),
@@ -248,17 +272,7 @@ app.layout = dbc.Container([
             dcc.Graph(
                 id='heatmap',
                 figure=old_heatmap_fig,
-                style={'height': '800px', 'width': '100%'}
-            )
-        ], width=12)
-    ], className="mb-4"),
-    dbc.Row([
-        dbc.Col([
-            html.H2("Treemap of Entity Threat Levels by Threat Type"),
-            dcc.Graph(
-                id='treemap',
-                figure=treemap_fig,
-                style={'height': '800px', 'width': '100%'}
+                style={'height': '1000px', 'width': '100%'}
             )
         ], width=12)
     ], className="mb-4"),
@@ -288,14 +302,15 @@ app.layout = dbc.Container([
     Input('threat-slider', 'value')
 )
 def update_threat_level_chart(threat_level):
-    filtered_df = grouped_df[grouped_df['Threat Level'] == threat_level]
+    filtered_df = grouped_df[grouped_df['Threat Level'] >= 6]
     fig = px.bar(
         filtered_df,
         x='Entity',
         y='Collaboration Count',
         color='Threat Level',
-        title='Threat Level and Collaborations Distribution across Entities',
+        title='Visualise the number of relationships with other entities, and its associated threat level',
         labels={'Collaboration Count': 'Number of Collaborations', 'Entity': 'Entity'},
+        color_continuous_scale='Viridis',
         template="plotly_dark"
     )
     fig.update_layout(plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)")

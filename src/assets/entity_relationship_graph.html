@@ -1,16 +1,33 @@
+<!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="UTF-8">
   <title>Entity Relationship Graph</title>
   <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    crossorigin="anonymous">
+
   <!-- Bootstrap JS (optional, only if needed for other dynamic features) -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    crossorigin="anonymous"></script>
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js"></script>
+  <!-- Make sure graph_data2.js is available and contains your allNodes and allEdges arrays -->
   <script src="graph_data2.js"></script>
+  <script>
+    // Modify node titles to remove the threat level portion.
+    // This regex looks for "Threat Level", optional whitespace, one or more digits, an optional comma, and optional spaces.
+    for (var i = 0; i < allNodes.length; i++) {
+      if (allNodes[i].title) {
+        // Log the original title for debugging
+        console.log("Original title:", allNodes[i].title);
+        allNodes[i].title = allNodes[i].title.replace(/Threat Level\s*\d+\s*,\s*/i, '');
+        console.log("Updated title:", allNodes[i].title);
+      }
+    }
+  </script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -20,11 +37,13 @@
       color: white;
       overflow: hidden;
     }
+
     #mynetwork {
       width: 100vw;
       height: 100vh;
       background-color: #222222;
     }
+
     /* Threat Level Widget */
     #threat-widget {
       position: fixed;
@@ -38,14 +57,17 @@
       text-align: center;
       z-index: 1000;
     }
+
     #threat-widget label {
       font-weight: bold;
       color: #333;
     }
+
     #threat-widget input[type="range"] {
       width: 100%;
       margin-top: 10px;
     }
+
     div.vis-tooltip {
       visibility: visible !important;
       opacity: 1 !important;
@@ -59,6 +81,7 @@
       max-width: 300px;
       pointer-events: none;
     }
+
     /* Align search widget to the right */
     #search-widget {
       position: fixed;
@@ -71,6 +94,7 @@
       z-index: 1000;
       width: 300px;
     }
+
     /* Auto-complete suggestion styles */
     .autocomplete-suggestions {
       position: absolute;
@@ -84,22 +108,26 @@
       left: 0;
       margin-top: 40px;
     }
+
     .autocomplete-suggestion {
       padding: 8px;
       cursor: pointer;
     }
+
     .autocomplete-suggestion:hover {
       background-color: #eee;
     }
+
     .input-group {
       margin-bottom: 10px;
     }
   </style>
 </head>
+
 <body>
   <div id="mynetwork"></div>
 
-  <!-- Search widget for entity pairs -->
+  <!-- Search widget for entity pairs and other searches -->
   <div id="search-widget">
     <div class="input-group">
       <span class="input-group-text">Entity 1:</span>
@@ -111,25 +139,30 @@
     </div>
     <button id="go-button" class="btn btn-primary w-100">Go</button>
     <button id="reset-button" class="btn btn-secondary w-100 mt-2">Reset</button>
+
     <h5 class="mt-3" style="color: black;">Search by Location</h5>
     <div class="input-group">
       <span class="input-group-text">Location:</span>
-      <input type="text" class="form-control" id="location-search" autocomplete="off" placeholder="Search for a location">
+      <input type="text" class="form-control" id="location-search" autocomplete="off"
+        placeholder="Search for a location">
     </div>
     <div class="input-group mt-2">
       <span class="input-group-text">Entity:</span>
-      <input type="text" class="form-control" id="entity-by-location" autocomplete="off" placeholder="Select entity by location">
+      <input type="text" class="form-control" id="entity-by-location" autocomplete="off"
+        placeholder="Select entity by location">
     </div>
     <button id="location-go-button" class="btn btn-primary w-100 mt-2">Go</button>
 
     <h5 class="mt-3" style="color: black;">Search by Threat Type</h5>
     <div class="input-group">
       <span class="input-group-text">Type:</span>
-      <input type="text" class="form-control" id="type-search" autocomplete="off" placeholder="Search for a threat type">
+      <input type="text" class="form-control" id="type-search" autocomplete="off"
+        placeholder="Search for a threat type">
     </div>
     <div class="input-group mt-2">
       <span class="input-group-text">Entity:</span>
-      <input type="text" class="form-control" id="entity-by-type" autocomplete="off" placeholder="Select entity by type">
+      <input type="text" class="form-control" id="entity-by-type" autocomplete="off"
+        placeholder="Select entity by type">
     </div>
     <button id="type-go-button" class="btn btn-primary w-100 mt-2">Go</button>
   </div>
@@ -276,9 +309,25 @@
     // Setup autocomplete for inputs
     setupAutocomplete('entity1', allNodes, (selected) => setupEntity2Autocomplete(selected.id));
 
+    // --- Helper Function for Safe Focus ---
+    function safeFocus(focusCallback) {
+      let focusApplied = false;
+      function applyFocus() {
+        if (!focusApplied) {
+          focusApplied = true;
+          focusCallback();
+        }
+      }
+      // Listen for the stabilization event.
+      network.once('stabilizationIterationsDone', applyFocus);
+      // Fallback timeout in case the event does not trigger within 1200ms.
+      setTimeout(applyFocus, 1200);
+      // Trigger stabilization.
+      network.stabilize();
+    }
+
     // Function to highlight a single entity:
-    // It first updates the graph to the target threat level, waits for stabilization,
-    // then uses network.focus() to zoom in on the target node and permanently highlight it.
+    // It updates the graph to the target threat level, then uses safeFocus to zoom in on the target node and permanently highlight it.
     function highlightEntity(entityLabel) {
       const node = allNodes.find(node => node.label === entityLabel);
       if (!node) {
@@ -290,26 +339,25 @@
       document.getElementById('threat-level-slider').value = threatLevel;
       document.getElementById('slider-value').textContent = threatLevel;
 
-      network.once('stabilizationIterationsDone', function() {
+      safeFocus(() => {
+        // Zoom in more by reducing the scale to 0.3
         network.focus(node.id, {
-          scale: 0.5,
+          scale: 0.3, // Lower scale means a higher zoom level
           animation: {
             duration: 1000,
             easingFunction: 'easeInOutQuad'
           }
         });
-        // Permanently highlight the node until a new search or reset is made.
+        // Permanently highlight the node
         network.body.data.nodes.update({
           id: node.id,
           color: { background: 'red', border: 'red' }
         });
       });
-      network.stabilize();
     }
 
     // Function to highlight a pair of entities:
-    // It updates the graph to the target threat level, waits for stabilization,
-    // then zooms (using focus on the first entity) and permanently highlights both nodes and the connecting edge.
+    // It updates the graph to the target threat level, then uses safeFocus to zoom in on the first entity and permanently highlight both nodes and the connecting edge.
     function highlightPair(entity1Label, entity2Label) {
       const entity1 = allNodes.find(node => node.label === entity1Label);
       const entity2 = allNodes.find(node => node.label === entity2Label);
@@ -334,27 +382,27 @@
       document.getElementById('threat-level-slider').value = currentThreatLevel;
       document.getElementById('slider-value').textContent = currentThreatLevel;
 
-      network.once('stabilizationIterationsDone', function () {
-        // For pairs, simply focus on the first entity.
+      safeFocus(() => {
+        // Zoom in on the first entity by focusing on it only, with a scale of 0.3
         network.focus(entity1.id, {
-          scale: 0.5,
+          scale: 0.3, // Closer zoom to make the node prominent
           animation: {
             duration: 1000,
             easingFunction: 'easeInOutQuad'
           }
         });
-        // Permanently highlight both nodes and the connecting edge until a new search or reset.
+        // Permanently highlight both nodes
         network.body.data.nodes.update([
           { id: entity1.id, color: { background: 'red', border: 'red' } },
           { id: entity2.id, color: { background: 'red', border: 'red' } }
         ]);
+        // Highlight the connecting edge
         network.body.data.edges.update({
           id: edge.id || `${edge.from}-${edge.to}`,
           color: { color: '#ff6600', highlight: '#ff6600' },
           width: 3
         });
       });
-      network.stabilize();
     }
 
     // Reset button: clears input fields, removes suggestion boxes, resets threat level to 10, and updates the graph.
@@ -505,4 +553,5 @@
     setupLocationAndTypeAutocomplete();
   </script>
 </body>
+
 </html>
