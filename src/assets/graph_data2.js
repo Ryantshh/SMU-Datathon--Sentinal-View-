@@ -11050,16 +11050,6 @@ const allNodes = [
     "threat_type": "Corruption"
   },
   {
-    "id": "Attorney - General ' s Chambers",
-    "label": "Attorney - General ' s Chambers",
-    "shape": "dot",
-    "color": "#97c2fc",
-    "title": "Attorney - General ' s Chambers: Threat Level 3, Threat Type: Economic, Origin: Singapore",
-    "threat_level": 3,
-    "location": "Singapore",
-    "threat_type": "Economic"
-  },
-  {
     "id": "Corrupt Practices Investigation Bureau",
     "label": "Corrupt Practices Investigation Bureau",
     "shape": "dot",
@@ -38985,12 +38975,7 @@ const allEdges = [
     "title": "Guilherme Esteves de Jesus (GDJ) was involved in alleged offences where a significant sum of money was distributed.",
     "threat_level": 7
   },
-  {
-    "from": "Guilherme Esteves de Jesus",
-    "to": "Attorney-General's Chambers",
-    "title": "Guilherme Esteves de Jesus was involved in alleged offences between 2009 and 2014, in collaboration with the Attorney-General's Chambers.",
-    "threat_level": 6
-  },
+  
   {
     "from": "Guilherme Esteves de Jesus",
     "to": "Corrupt Practices Investigation Bureau",

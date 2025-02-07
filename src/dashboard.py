@@ -7,6 +7,7 @@ import dash_bootstrap_components as dbc
 from wordcloud import WordCloud
 import io
 import base64
+import re
 
 # Load the cleaned relationships JSON file
 file_path = '../processed_data/cleaned_extracted_relationships.json'
@@ -67,6 +68,7 @@ df_heatmap = pd.DataFrame({
     'Entity 2': entity_2_list_heat,
     'Threat Level': threat_level_list_heat
 })
+
 # Pivot the data: if duplicate (Entity 1, Entity 2) pairs exist, take the max threat level
 heatmap_data = df_heatmap.pivot_table(
     index='Entity 1',
@@ -208,16 +210,18 @@ dbc.NavbarSimple(
         dbc.Col([
             html.H2("Threat Level and Collaborations Distribution Across Entities"),
             dcc.Graph(id='threat-level-bar', config={'scrollZoom': True, 'displayModeBar': True, 'responsive': True},  style={'height': '700px', 'width': '100%'}),
+            html.H5("Select Threat Level", style={'color': 'white', 'font-weight': 'bold'}),
             dcc.Slider(
                 id='threat-slider',
                 min=6,
                 max=df['Threat Level'].max(),
-                value=df['Threat Level'].min(),
+                value=6,
                 marks={i: str(i) for i in range(df['Threat Level'].min(), df['Threat Level'].max() + 1)},
                 step=1
             )
         ], width=12)
     ], className="mb-4"),
+    
     dbc.Row([
         dbc.Col([
             html.H2("Threat Origins and Impact Levels to Singapore"),
@@ -256,6 +260,7 @@ dbc.NavbarSimple(
         dbc.Col([
             html.H2("Impact Levels to Singapore"),
             dcc.Graph(id='bar-chart', figure=create_bar_chart(0), style={'height': '700px', 'width': '100%'}),
+            html.H5("Select Threat Level", style={'color': 'white', 'font-weight': 'bold'}),
             dcc.Slider(
                 id='impact-level-slider',
                 min=df_bar['Impact Level'].min(),
@@ -266,16 +271,16 @@ dbc.NavbarSimple(
             )
         ], width=12)
     ], className="mb-4"),
-    dbc.Row([
-        dbc.Col([
-            html.H2("Threat Level Heatmap"),
-            dcc.Graph(
-                id='heatmap',
-                figure=old_heatmap_fig,
-                style={'height': '1000px', 'width': '100%'}
-            )
-        ], width=12)
-    ], className="mb-4"),
+    # dbc.Row([
+    #     dbc.Col([
+    #         html.H2("Threat Level Heatmap"),
+    #         dcc.Graph(
+    #             id='heatmap',
+    #             figure=old_heatmap_fig,
+    #             style={'height': '1000px', 'width': '100%'}
+    #         )
+    #     ], width=12)
+    # ], className="mb-4"),
     dbc.Row([
         dbc.Col([
             html.H2("Word Cloud for Selected Entities"),
@@ -302,7 +307,7 @@ dbc.NavbarSimple(
     Input('threat-slider', 'value')
 )
 def update_threat_level_chart(threat_level):
-    filtered_df = grouped_df[grouped_df['Threat Level'] >= 6]
+    filtered_df = grouped_df[grouped_df['Threat Level'] >= threat_level]
     fig = px.bar(
         filtered_df,
         x='Entity',
@@ -316,21 +321,32 @@ def update_threat_level_chart(threat_level):
     fig.update_layout(plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)")
     return fig
 
+import re
+
 @app.callback(
     Output('wordcloud-output', 'children'),
     Input('entity-dropdown', 'value')
 )
 def update_wordcloud(selected_pair):
     entity_1, entity_2 = selected_pair.split(' & ')
+    
     filtered_data = df_wordcloud[(df_wordcloud['Entity 1'] == entity_1) & (df_wordcloud['Entity 2'] == entity_2)]
+    
     text = " ".join(filtered_data['Relationship Summary'].tolist() + filtered_data['Relevant Context'].tolist())
+    
     if not text.strip():
         return html.Div("No relevant text available for the selected entity pair.", style={'color': 'white'})
+    
+    text = re.sub(r'\b' + re.escape(entity_1) + r'\b', '', text)
+    text = re.sub(r'\b' + re.escape(entity_2) + r'\b', '', text)
+    
     wordcloud = WordCloud(width=800, height=400, background_color='black', colormap='viridis').generate(text)
+    
     img = io.BytesIO()
     wordcloud.to_image().save(img, format='PNG')
     img.seek(0)
     img_b64 = base64.b64encode(img.getvalue()).decode('utf-8')
+    
     return html.Img(src=f'data:image/png;base64,{img_b64}', style={'width': '80%', 'height': '80%'})
 
 @app.callback(

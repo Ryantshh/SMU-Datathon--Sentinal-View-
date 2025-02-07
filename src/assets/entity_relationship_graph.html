@@ -340,18 +340,28 @@
       document.getElementById('slider-value').textContent = threatLevel;
 
       safeFocus(() => {
-        // Zoom in more by reducing the scale to 0.3
+        // Zoom in on the node
         network.focus(node.id, {
-          scale: 0.3, // Lower scale means a higher zoom level
+          scale: 0.3,
           animation: {
             duration: 1000,
             easingFunction: 'easeInOutQuad'
           }
         });
-        // Permanently highlight the node
+        // Highlight the node with red color
         network.body.data.nodes.update({
           id: node.id,
           color: { background: 'red', border: 'red' }
+        });
+
+        // Find and highlight all edges connected to this node
+        const connectedEdges = allEdges.filter(edge => edge.from === node.id || edge.to === node.id);
+        connectedEdges.forEach(edge => {
+          network.body.data.edges.update({
+            id: edge.id || `${edge.from}-${edge.to}`, // Ensure the edge has an identifier
+            color: { color: '#0096FF', highlight: '#ff6600' },
+            width: 3
+          });
         });
       });
     }
@@ -399,7 +409,7 @@
         // Highlight the connecting edge
         network.body.data.edges.update({
           id: edge.id || `${edge.from}-${edge.to}`,
-          color: { color: '#ff6600', highlight: '#ff6600' },
+          color: { color: '#0096FF', highlight: '#ff6600' },
           width: 3
         });
       });
