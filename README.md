@@ -60,6 +60,7 @@ This project requires the following Python packages:
 ## Features
 
 - Threat Level Distribution: Visualizes the distribution of threat levels across different entities in a bar chart.
+- Threat Type TreeMap: Visualise the prominence of threat types.
 - Threat Origins Geo Map: Displays the locations of potential threats and their impact on Singapore on a geographical map.
 - Impact Levels Bar Chart: Allows dynamic filtering of threat impact levels, updated through a slider.
 - Threat Level Heatmap: Shows the frequency and threat levels between different entity pairs in a heatmap format.
